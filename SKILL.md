@@ -45,9 +45,10 @@ Ask these questions ONE AT A TIME, not all at once. Keep it conversational.
 "Tem algum site ou app que voce acha bonito? Nao precisa ser do mesmo ramo - so a estetica."
 (Se o usuario responder, use como peso extra no matching)
 
-### Phase 2: Match
+### Phase 2: Match + Industry Intelligence
 
-After the quiz, read `~/.claude/design-systems/INDEX.json` and score each design system:
+**Step A: Match design system (visual reference)**
+Read `~/.claude/design-systems/INDEX.json` and score each design system:
 
 Scoring rules:
 - **best_for** matches product type: +3 points
@@ -58,15 +59,41 @@ Scoring rules:
 - User mentioned a reference site that's in the index: +5 points
 - User's vibe description matches vibe_keywords: +2 points per keyword match
 
-Present the **top 3 matches** to the user:
-```
-Baseado nas suas respostas, os 3 design systems que mais combinam:
+**Step B: Industry reasoning lookup (design intelligence)**
+Read `~/.claude/design-systems/pro-max-data/ui-reasoning.csv` and find the row matching the user's product type. Extract:
+- Recommended_Pattern (layout strategy)
+- Style_Priority (design style to prioritize)
+- Color_Mood (color direction)
+- Typography_Mood (font direction)
+- Key_Effects (animations, shadows)
+- Anti_Patterns (what to avoid)
+- Decision_Rules (conditional logic)
 
+**Step C: Color palette lookup**
+Read `~/.claude/design-systems/pro-max-data/colors.csv` and find the row matching the user's product type. This gives a complete design token set: Primary, Secondary, Accent, Background, Foreground, Card, Muted, Border, Destructive, Ring - all WCAG-adjusted.
+
+**Step D: Font pairing lookup**
+Read `~/.claude/design-systems/pro-max-data/typography.csv` and find the best pairing based on the Typography_Mood from Step B. Extract the Google Fonts URL, CSS import, and Tailwind config.
+
+**Step E: Landing pattern (if applicable)**
+If building a landing page, read `~/.claude/design-systems/pro-max-data/landing.csv` and find the best pattern based on Recommended_Pattern from Step B. Get section order, CTA placement, and conversion strategy.
+
+Present the **top 3 design system matches** plus the intelligence findings:
+```
+Baseado nas suas respostas:
+
+Design systems que mais combinam:
 1. [Name] - [vibe] (score X)
 2. [Name] - [vibe] (score Y)
 3. [Name] - [vibe] (score Z)
 
-Qual voce prefere? Ou quer que eu misture elementos de mais de um?
+Intelligence por industria:
+- Paleta: [color mood + token preview]
+- Tipografia: [heading font + body font]
+- Pattern: [recommended layout]
+- Evitar: [anti-patterns]
+
+Qual design system voce prefere? Posso combinar com a paleta/tipografia da industria.
 ```
 
 ### Phase 3: Component Research (ALWAYS do this - never skip)
@@ -85,11 +112,15 @@ This research is seamless - never ask the user "should I search for components?"
 2. If the user wants to mix, read multiple and note which elements from each
 3. Check if the current project already has a DESIGN.md - if so, ask whether to replace or merge
 4. **Merge** the design tokens from DESIGN.md with the component patterns found in Phase 3
+5. **Layer industry intelligence from Phase 2** - apply color tokens from colors.csv, font pairing from typography.csv (include the Google Fonts CSS import in the HTML head), and landing pattern from landing.csv if applicable
+6. When the DESIGN.md colors and the industry palette conflict, prefer the DESIGN.md visual identity but adopt the industry palette's semantic roles (Destructive, Ring, Muted)
 
 Generate a **standalone HTML file** with:
 - Tailwind CSS via CDN
-- All design tokens from the chosen DESIGN.md applied (colors, typography, shadows, border-radius)
+- Google Fonts via CSS import (from typography.csv pairing)
+- All design tokens applied (colors from DESIGN.md + industry palette semantic tokens)
 - Component patterns inspired by shadcn/21st.dev research (animations, layouts, interactions)
+- Landing page structure from landing.csv pattern (if applicable)
 - The actual component/page the user requested
 - Responsive (mobile + desktop)
 - Dark mode toggle if the design system supports both themes
@@ -155,9 +186,21 @@ When adopting into the project:
 - **Install shadcn components** that match what was used in the preview: `npx shadcn@latest add [component]`
 - If a component was found on 21st.dev: `npx shadcn@latest add "https://21st.dev/r/{creator}/{component}"`
 - Convert the standalone HTML into proper framework components (React, Next.js, etc.)
+- **Load framework-specific guidelines** from `~/.claude/design-systems/pro-max-data/stacks/{framework}.csv` (nextjs.csv, react.csv, shadcn.csv, html-tailwind.csv, etc.) and follow them during conversion
 - Reuse existing UI primitives and token systems
 - Preserve the design system's visual DNA but adapt to the project's architecture
 - Save the chosen DESIGN.md to the project root for future consistency
+
+### UX Quality Gate (apply during Phase 4 and Phase 6)
+
+Before delivering any preview or adopted code, silently validate against `~/.claude/design-systems/pro-max-data/ux-guidelines.csv`. Focus on HIGH severity items:
+- Accessibility: contrast ratios, focus states, semantic HTML, alt texts
+- Touch: min 44x44px targets, adequate spacing
+- Typography: readable sizes (min 14px body), proper hierarchy
+- Animation: respect prefers-reduced-motion, max 300ms for UI transitions
+- Forms: visible labels, error states, autofill support
+- Navigation: consistent patterns, visible current state
+Do NOT list the checks to the user. Just apply them silently.
 
 ## Design Quality Rules
 
@@ -170,6 +213,10 @@ When adopting into the project:
 - Motion: subtle, functional transitions (200-300ms ease), never decorative-only
 - Accessibility: 4.5:1 contrast ratio minimum, visible focus states, semantic HTML
 - Mobile-first: design for mobile, enhance for desktop
+
+## Charts & Data Visualization
+
+When the user needs charts/graphs, read `~/.claude/design-systems/pro-max-data/charts.csv` to select the right chart type based on data shape. The CSV includes recommended libraries, accessibility grades, and fallback strategies. Prefer Recharts for React/Next.js projects.
 
 ## Anti-patterns (NEVER do these)
 

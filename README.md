@@ -1,22 +1,36 @@
 # /design - AI Design Skill for Claude Code
 
-A skill that turns Claude Code into a complete design engine. Interactive quiz, 58 real-world design systems, automatic component research, cascading image generation (free > paid), and seamless project adoption.
+A skill that turns Claude Code into a complete design engine. Interactive quiz, 58 real-world design systems, industry-specific design intelligence, automatic component research, cascading image generation (free > paid), and seamless project adoption.
 
 ## What's included
 
-- **58 DESIGN.md** files extracted from real websites (Vercel, Stripe, Linear, Apple, Supabase, etc.)
+### Visual references (58 real-world design systems)
+- **58 DESIGN.md** files extracted from real websites (Vercel, Stripe, Linear, Apple, Supabase, etc.) with exact hex values, shadows, typography, component specs
 - **INDEX.json** with classification by theme, mood, density, style
-- **SKILL.md** with complete workflow (quiz > match > research > generate > refine > adopt)
+
+### Design intelligence (from UI UX Pro Max)
+- **161 color palettes** - complete design token sets (Primary, Secondary, Accent, Background, Card, Border, Ring) per product type, WCAG-adjusted
+- **73 font pairings** - with Google Fonts URL, CSS import, and Tailwind config ready to paste
+- **161 industry reasoning rules** - maps product type to recommended pattern, style, colors, typography, effects, and anti-patterns
+- **99 UX guidelines** - with do/don't and code examples, covering accessibility, touch, animation, forms, navigation
+- **34 landing page patterns** - section order, CTA placement, conversion strategies
+- **85 UI styles** - from Minimalism to Glassmorphism to Cyberpunk, with 22 attributes each
+- **25 chart types** - with library recommendations and accessibility grades
+- **16 framework-specific guidelines** - React, Next.js, Vue, Svelte, shadcn, Tailwind, and more
+
+### Workflow
+- **SKILL.md** with complete 6-phase workflow (quiz > match > research > generate > refine > adopt)
 - **design.md** (/design command)
 - **Image cascade** - Pollinations (free) > Imagen 4 (~$0.02) > Nano Banana 2 (~$0.07)
-- **shadcn/21st.dev integration** via MCP
+- **Component research** via shadcn/21st.dev MCP integration
+- **UX quality gate** - silently validates against 99 UX guidelines before delivery
 
 ## Installation (5 min)
 
 ### 1. Copy files
 
 ```bash
-# Design systems (58 DESIGN.md)
+# Everything (design systems + intelligence data + skill)
 cp -r design-systems/ ~/.claude/design-systems/
 
 # Skill
@@ -63,7 +77,7 @@ To use Imagen 4 and Nano Banana 2, add to your shell profile:
 export GEMINI_DESIGN_API_KEY="your_gemini_api_key"
 ```
 
-Get a free key at https://aistudio.google.com/apikeys
+Get a key at https://aistudio.google.com/apikeys
 
 Without this, Tier 1 (Pollinations/Flux) works for free with zero configuration.
 
@@ -81,12 +95,13 @@ Restart to load the new skill and commands.
 
 ### Workflow
 
-1. Quiz (5 simple questions about what you're building)
-2. Top 3 design systems suggested based on your answers
-3. Automatic component research via shadcn/21st.dev
-4. Generates standalone HTML preview (open in browser)
-5. Refine as many times as you want
-6. Adopt into your project (converts to React/Next.js components)
+1. **Quiz** - 5 simple questions about what you're building
+2. **Match** - Top 3 design systems + industry intelligence (colors, fonts, patterns, anti-patterns)
+3. **Component research** - automatic search via shadcn/21st.dev MCP
+4. **Generate** - standalone HTML preview with Tailwind + Google Fonts (open in browser)
+5. **Refine** - as many times as you want
+6. **Adopt** - converts to real framework components with framework-specific guidelines applied
+7. **UX quality gate** - silently validates accessibility, touch targets, typography, animations
 
 ### Image generation
 
@@ -101,5 +116,6 @@ Airbnb, Airtable, Apple, BMW, Cal, Claude, Clay, ClickHouse, Cohere, Coinbase, C
 
 ## Credits
 
-- Design systems extracted from https://github.com/VoltAgent/awesome-design-md (MIT)
-- Components via shadcn/ui and 21st.dev
+- Design systems extracted from [VoltAgent/awesome-design-md](https://github.com/VoltAgent/awesome-design-md) (MIT)
+- Design intelligence data from [ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) (MIT)
+- Components via [shadcn/ui](https://ui.shadcn.com) and [21st.dev](https://21st.dev)
